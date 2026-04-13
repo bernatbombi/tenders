@@ -1,0 +1,20 @@
+meta {
+  name: Refresh tenders
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/tenders/refresh
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  const data = res.getBody();
+  bru.setVar("jobId", data.jobId);
+}

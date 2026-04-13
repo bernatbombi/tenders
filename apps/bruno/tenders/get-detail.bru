@@ -1,0 +1,19 @@
+meta {
+  name: Get tender detail
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/tenders/:expediente
+  body: none
+  auth: bearer
+}
+
+params:path {
+  expediente: {{expediente}}
+}
+
+auth:bearer {
+  token: {{token}}
+}
