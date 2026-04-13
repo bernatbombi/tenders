@@ -5,7 +5,7 @@ dll-tenders CLI
 Usage:
   python main.py                          # fetch all tenders (CPV 72200000), save to DB
   python main.py 72200000 5              # limit to 5 pages
-  python main.py detail <expediente>     # fetch + save full detail for one tender
+  python main.py detail <expediente>     # fetch + store detail + upload docs
   python main.py cpv                     # dump full CPV code tree to cpv_codes.json
 """
 
@@ -13,7 +13,7 @@ import json
 import sys
 
 from scraper import DEFAULT_CPV, fetch_cpv_tree, fetch_tender_detail, fetch_tenders
-from db import upsert_tenders, upsert_tender_detail
+from db import upsert_tenders, upsert_tender_detail, get_collection, log_files_downloaded
 from storage import upload_from_url
 
 
@@ -38,9 +38,6 @@ def cmd_fetch(cpv: str, max_pages: int) -> None:
 
 
 def cmd_detail(expediente: str) -> None:
-    from db import get_collection
-
-    # Look up the detail_url from the DB
     doc = get_collection().find_one({"expediente": expediente}, {"detail_url": 1})
     if not doc:
         print(f"Expediente '{expediente}' not found in DB. Run fetch first.")
@@ -55,14 +52,11 @@ def cmd_detail(expediente: str) -> None:
 
     print("\nSaving detail to MongoDB...")
     upsert_tender_detail(detail)
-
-    _upload_tender_documents(expediente, detail)
+    _upload_documents(expediente, detail)
     print("Done.")
 
 
-def _upload_tender_documents(expediente: str, detail: dict) -> None:
-    from db import get_collection
-
+def _upload_documents(expediente: str, detail: dict) -> None:
     prefix = expediente
     updates = {}
 
@@ -90,10 +84,13 @@ def _upload_tender_documents(expediente: str, detail: dict) -> None:
         updates[doc_key] = updated_docs
 
     if updates:
-        get_collection().update_one(
-            {"expediente": expediente},
-            {"$set": updates},
+        get_collection().update_one({"expediente": expediente}, {"$set": updates})
+        total = sum(
+            len(doc.get("links", [])) if doc_key == "documents" else 1
+            for doc_key, docs in updates.items()
+            for doc in docs
         )
+        log_files_downloaded(expediente, count=total)
         print(f"    Uploaded documents and updated DB.")
 
 
@@ -110,13 +107,11 @@ def main() -> None:
 
     if args and args[0] == "cpv":
         cmd_cpv()
-
     elif args and args[0] == "detail":
         if len(args) < 2:
             print("Usage: python main.py detail <expediente>")
             sys.exit(1)
         cmd_detail(args[1])
-
     else:
         cpv = args[0] if args else DEFAULT_CPV
         max_pages = int(args[1]) if len(args) > 1 else 0

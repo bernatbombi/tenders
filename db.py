@@ -6,6 +6,7 @@ or in a .env file at the project root.
 """
 
 import os
+import uuid
 from datetime import datetime
 from pymongo import MongoClient, UpdateOne
 from pymongo.collection import Collection
@@ -84,11 +85,21 @@ def upsert_tenders(tenders: list[dict]) -> None:
     """Bulk upsert a list of tenders."""
     if not tenders:
         return
+    col = get_collection()
+    existing = {
+        doc["expediente"]
+        for doc in col.find({"expediente": {"$in": [t["expediente"] for t in tenders]}}, {"expediente": 1})
+    }
     ops = [
         UpdateOne({"expediente": t["expediente"]}, {"$set": t}, upsert=True)
         for t in [_prepare(t) for t in tenders]
     ]
-    result = get_collection().bulk_write(ops)
+    result = col.bulk_write(ops)
+    for t in tenders:
+        if t["expediente"] not in existing:
+            log_added(t["expediente"])
+        else:
+            log_updated(t["expediente"])
     print(f"    DB: {result.upserted_count} inserted, {result.modified_count} updated")
 
 
@@ -100,3 +111,64 @@ def upsert_tender_detail(detail: dict) -> None:
         {"$set": d},
         upsert=True,
     )
+    log_detail_updated(d["expediente"])
+
+
+# ---------------------------------------------------------------------------
+# Jobs
+# ---------------------------------------------------------------------------
+
+def create_job(type: str, **meta) -> str:
+    """Create a new job record, return its ID."""
+    job_id = str(uuid.uuid4())
+    get_collection("jobs").insert_one({
+        "_id": job_id,
+        "type": type,
+        "status": "pending",
+        "createdAt": datetime.utcnow(),
+        "startedAt": None,
+        "finishedAt": None,
+        "error": None,
+        **meta,
+    })
+    return job_id
+
+
+def update_job(job_id: str, **fields) -> None:
+    get_collection("jobs").update_one({"_id": job_id}, {"$set": fields})
+
+
+def get_job(job_id: str) -> dict | None:
+    doc = get_collection("jobs").find_one({"_id": job_id})
+    if doc:
+        doc["jobId"] = doc.pop("_id")
+    return doc
+
+
+# ---------------------------------------------------------------------------
+# History
+# ---------------------------------------------------------------------------
+
+def _log(expediente: str, event: str, **meta) -> None:
+    get_collection("history").insert_one({
+        "expediente": expediente,
+        "event": event,
+        "at": datetime.utcnow(),
+        **meta,
+    })
+
+
+def log_added(expediente: str) -> None:
+    _log(expediente, "added")
+
+
+def log_updated(expediente: str) -> None:
+    _log(expediente, "updated")
+
+
+def log_detail_updated(expediente: str) -> None:
+    _log(expediente, "detail_updated")
+
+
+def log_files_downloaded(expediente: str, count: int) -> None:
+    _log(expediente, "files_downloaded", count=count)
