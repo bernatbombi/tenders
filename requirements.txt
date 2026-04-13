@@ -1,0 +1,5 @@
+playwright
+pymongo
+python-dotenv
+boto3
+beautifulsoup4
