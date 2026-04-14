@@ -6,6 +6,8 @@ or in a .env file at the project root.
 """
 
 import os
+import re
+import unicodedata
 import uuid
 from datetime import datetime
 from pymongo import MongoClient, UpdateOne
@@ -31,6 +33,16 @@ def _parse_date(value: str | None) -> datetime | None:
     return None
 
 
+def _slugify(text: str) -> str:
+    text = text.lower()
+    text = unicodedata.normalize('NFKD', text)
+    text = ''.join(c for c in text if not unicodedata.combining(c))
+    text = re.sub(r'[\s/]+', '-', text)
+    text = re.sub(r'[^a-z0-9-]', '', text)
+    text = re.sub(r'-+', '-', text)
+    return text.strip('-')
+
+
 def _prepare(doc: dict) -> dict:
     """Convert all string date fields to datetime objects before storing."""
     d = dict(doc)
@@ -45,6 +57,8 @@ def _prepare(doc: dict) -> dict:
             if isinstance(pub.get("date"), str) else pub
             for pub in d["publications"]
         ]
+    if "expediente" in d:
+        d["slug"] = _slugify(d["expediente"])
     return d
 
 

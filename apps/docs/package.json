@@ -1,0 +1,15 @@
+{
+  "name": "@tenders/docs",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "bundle": "redocly bundle openapi.yaml -o openapi-bundled.yaml",
+    "dev": "pnpm bundle && node server.js",
+    "build": "pnpm bundle"
+  },
+  "dependencies": {
+    "@redocly/cli": "^2.11.1",
+    "@scalar/api-reference": "^1.39.3"
+  }
+}

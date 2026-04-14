@@ -1,17 +1,17 @@
 meta {
   name: Analyse tender
   type: http
-  seq: 4
+  seq: 5
 }
 
 post {
-  url: {{baseUrl}}/tenders/{{expediente}}/analyze
+  url: {{baseUrl}}/tenders/:slug/analyze
   body: none
   auth: bearer
 }
 
 params:path {
-  expediente:
+  slug: {{slug}}
 }
 
 auth:bearer {

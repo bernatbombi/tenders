@@ -1,17 +1,17 @@
 meta {
-  name: Get tender detail
+  name: Get tender
   type: http
   seq: 3
 }
 
 get {
-  url: {{baseUrl}}/tenders/:expediente
+  url: {{baseUrl}}/tenders/:slug
   body: none
   auth: bearer
 }
 
 params:path {
-  expediente: 1579267C
+  slug: {{slug}}
 }
 
 auth:bearer {
