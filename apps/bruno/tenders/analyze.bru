@@ -1,0 +1,24 @@
+meta {
+  name: Analyse tender
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/tenders/{{expediente}}/analyze
+  body: none
+  auth: bearer
+}
+
+params:path {
+  expediente:
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  const data = res.getBody();
+  bru.setVar("jobId", data.jobId);
+}

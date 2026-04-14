@@ -1,0 +1,313 @@
+Answer each of the following questions based solely on the provided bid documents.
+For each question the JSON key it maps to is indicated in brackets.
+
+────────────────────────────────────────────────────────────────────────────────
+Q00 [document_inventory] — DOCUMENT INVENTORY
+────────────────────────────────────────────────────────────────────────────────
+Multiple documents may be provided. Identify the primary pliegos document and list
+all supplementary documents. For any document explicitly referenced in the pliegos
+that is NOT among the provided files, list it and assess its relevance to the analysis.
+
+Sub-questions:
+- Which document has been identified as the primary pliegos?
+- Are there additional documents provided (e.g., annexes, technical specifications,
+  budget tables)? List them.
+- Are there documents referenced in the pliegos that are not among the provided files?
+  List each by name.
+- For each missing referenced document, assess its relevance: would its absence
+  materially affect the analysis? (HIGH / MEDIUM / LOW)
+
+────────────────────────────────────────────────────────────────────────────────
+Q01 [legal_framework] — LEGAL FRAMEWORK
+────────────────────────────────────────────────────────────────────────────────
+Does the bid fall under a specific public procurement legal framework?
+If so, which one, and which articles or clauses are explicitly cited?
+
+Sub-questions:
+- Is this bid governed by Spanish law (LCSP), EU directives, or another framework?
+- Are there specific articles cited that impose obligations on the bidder? List them.
+- Are there any additional legal references (regulations, royal decrees, technical norms)?
+
+────────────────────────────────────────────────────────────────────────────────
+Q02 [envelope_a_documents] — ENVELOPE A: ADMINISTRATIVE DOCUMENTS
+────────────────────────────────────────────────────────────────────────────────
+Does the bid specify required administrative or capacity documents?
+List each one with its exact name as written in the bid.
+
+Sub-questions:
+- Is a DEUC / ESPD (Documento Europeo Único de Contratación) form required?
+- Are tax clearance certificates required? From which authority (AEAT, Hacienda...)?
+- Is a certificate of social security compliance (Seguridad Social) required?
+- Are notarized deeds or company registration documents (escritura de constitución,
+  poderes notariales) required?
+- Is a professional liability insurance certificate required?
+  If so, what is the minimum coverage amount in EUR?
+- Are solvency declarations (solvencia económica, técnica o profesional) required?
+  If so, what are the specific thresholds or criteria?
+- Are any other specific certifications, declarations, or administrative forms required?
+
+────────────────────────────────────────────────────────────────────────────────
+Q03 [envelope_b_technical_proposal] — ENVELOPE B: TECHNICAL PROPOSAL
+────────────────────────────────────────────────────────────────────────────────
+Does the bid require a technical proposal, memory of project, or equivalent document?
+Describe its required content and estimate the effort to produce it.
+
+Sub-questions:
+- What is the exact name used in the bid for this document?
+- Does the bid specify a maximum number of pages or word count?
+- Does the bid specify a required structure or mandatory sections?
+- What technical sections must be included (methodology, team profiles, timeline,
+  quality plan, risk plan...)?
+- Is there a scoring rubric or evaluation criteria defined for this document?
+- Estimate: would producing this document require more than 3 working days of effort?
+  Set high_effort_flag to true if yes.
+
+────────────────────────────────────────────────────────────────────────────────
+Q04 [envelope_b_additional] — ENVELOPE B: ADDITIONAL DOCUMENTS
+────────────────────────────────────────────────────────────────────────────────
+What additional documents or deliverables are required in the technical envelope
+beyond the main proposal?
+
+Sub-questions:
+- Are team CVs or professional profile documents required?
+  If so, how many and for which roles?
+- Are reference projects or case studies required? How many?
+  Are there minimum contract value or scope requirements for those references?
+- Is a project timeline or Gantt chart required?
+- Are quality or methodology certificates required?
+- Are any other documents required in the technical envelope?
+
+────────────────────────────────────────────────────────────────────────────────
+Q05 [envelope_c_pricing] — ENVELOPE C: PRICING FORMAT
+────────────────────────────────────────────────────────────────────────────────
+Does the bid provide or require a specific pricing template or economic format?
+Describe its structure fully.
+
+Sub-questions:
+- Is there an official pricing spreadsheet or form that must be completed?
+  What is its name?
+- Does the format require a breakdown by line items, service categories, or phases?
+- Does the format require a breakdown of man-hours by seniority level or role?
+- Or does it only require a single total fixed price?
+- Are there any unit prices or hourly rates that must be quoted?
+- Are there any price caps or maximum values defined?
+
+────────────────────────────────────────────────────────────────────────────────
+Q06 [proof_of_concept] — PROOF OF CONCEPT / TECHNICAL AUDIT
+────────────────────────────────────────────────────────────────────────────────
+Does the bid require a Proof of Concept (PoC), technical audit, or assessment of
+the client's existing systems? If so, is it required before or after contract award?
+
+Sub-questions:
+- Is a PoC, pilot, or technical audit explicitly mentioned?
+- Is this a formal pre-award requirement, or a post-award deliverable?
+- Is there a deadline or format specified for the PoC?
+- What systems, platforms, or technology areas must be covered?
+- Are there evaluation criteria defined for the PoC?
+
+────────────────────────────────────────────────────────────────────────────────
+Q07 [public_budget_rates] — PUBLIC BUDGET RATES
+────────────────────────────────────────────────────────────────────────────────
+Does the bid include official hourly rates used to calculate the public initial budget?
+If so, list each rate with its associated role or category.
+
+Sub-questions:
+- What roles or seniority levels are referenced in the budget calculation?
+- What is the exact hourly price per role as stated in the bid (in EUR)?
+- What is the total estimated number of hours per role?
+- Is the total public budget figure (presupuesto base de licitación) disclosed?
+  If so, what is it (excluding and including VAT)?
+- Is there a breakdown between base budget and IVA?
+
+────────────────────────────────────────────────────────────────────────────────
+Q08 [physical_presence] — PHYSICAL PRESENCE  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid require physical presence at the client's premises for meetings,
+work sessions, or any other purpose?
+
+Sub-questions:
+- Is physical presence required for specific meeting types
+  (kick-off, steering committee, sprint reviews...)?
+- Is a minimum number of days per week or per month on-site specified?
+  If so, how many?
+- Is the location of the client's offices specified? Where?
+- Are travel or accommodation costs covered by the client, or must we absorb them?
+- Is remote work explicitly permitted, restricted, or not mentioned?
+- Set required: true and include notes if any on-site obligation exists.
+
+────────────────────────────────────────────────────────────────────────────────
+Q09 [partner_certifications] — TECHNOLOGY PARTNER CERTIFICATIONS  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid require specific partner certifications with technology vendors
+or software platforms?
+
+Sub-questions:
+- Which technology vendors or platforms require certification
+  (AWS, Azure, GCP, Salesforce, SAP, Oracle...)?
+- What certification level is required (e.g., Premier, Advanced, Select, Certified)?
+- Does the bid explicitly allow for "equivalent experience" or "equivalent accreditation"
+  if the official certification is not held?
+- Is the certification required at company level or for specific individual team members?
+
+────────────────────────────────────────────────────────────────────────────────
+Q10 [required_certifications] — REQUIRED CERTIFICATIONS (ALL TYPES)  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid require any formal certifications of any kind?
+Capture ALL certifications regardless of issuing body or standard type.
+
+Sub-questions:
+- Are any ISO standards required? List each (e.g., ISO 9001 Quality, ISO 27001 Security,
+  ISO 14001 Environmental, ISO 20000 IT Service Management...)?
+- Are any national or Spanish-specific standards required?
+  (e.g., ENS — Esquema Nacional de Seguridad, UNE standards)?
+- Are any accessibility or compliance attestations required?
+  (e.g., WCAG 2.1, RGPD/GDPR compliance certificate)?
+- Are any security or audit certifications required?
+  (e.g., SOC 2, PCI-DSS, Common Criteria)?
+- Are any industry-specific certifications required
+  (e.g., CE marking, sector regulations)?
+- For each certification found:
+  Is it a mandatory elimination criterion, or is it scored as a differentiator?
+  Is it required at company level, individual level, or applied to a system/product?
+
+────────────────────────────────────────────────────────────────────────────────
+Q11 [proprietary_licenses] — PROPRIETARY SOFTWARE LICENSES  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid require the possession or purchase of specific proprietary software
+licenses to perform the work?
+
+Sub-questions:
+- Which specific licenses are required (e.g., Oracle Enterprise, SAP, Microsoft...)?
+- Must the company hold the license before bidding, or only after contract award?
+- Are these licenses provided by the client, or must they be procured by us?
+- What is the estimated cost of these licenses if stated in the bid?
+
+────────────────────────────────────────────────────────────────────────────────
+Q12 [minimum_turnover] — MINIMUM ANNUAL TURNOVER  [HARD FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid set a minimum annual turnover threshold for bidders?
+
+Sub-questions:
+- What is the exact minimum annual turnover figure required (in EUR)?
+- How many years of turnover history must be demonstrated (last 1, 2, or 3 years)?
+- What document is accepted as proof (audited annual accounts, tax declarations,
+  declaración del impuesto de sociedades...)?
+- Is this a hard elimination criterion (solvencia económica) or a scored criterion?
+- Set high_threshold_flag: true if the minimum exceeds €1,000,000.
+
+────────────────────────────────────────────────────────────────────────────────
+Q13 [technology_stack] — TECHNOLOGY STACK REQUIREMENTS  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid specify required programming languages, frameworks, platforms,
+or technology versions?
+
+Sub-questions:
+- Which specific languages or frameworks are required or mentioned?
+- Are specific version numbers required for any technology?
+- Are any of the required technologies considered legacy
+  (e.g., COBOL, RPGLE, NATURAL, Java versions below 11, .NET Framework < 4)?
+  Set is_legacy: true for each and set legacy_flag: true on the parent object.
+- Does the bid allow modern equivalents if the exact specified technology
+  is not part of our stack?
+
+────────────────────────────────────────────────────────────────────────────────
+Q14 [hosting_requirements] — DATA HOSTING AND INFRASTRUCTURE  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid impose specific data hosting, storage, or infrastructure requirements?
+
+Sub-questions:
+- Is data required to be hosted in a specific country or jurisdiction (e.g., Spain only)?
+- Is a national or government cloud required (e.g., SARA network, CCN cloud)?
+- Is on-premise deployment at client facilities required?
+- Are specific cloud providers excluded or mandated?
+- Would these requirements conflict with a standard AWS/Azure/GCP deployment?
+  Set conflicts_with_standard_cloud: true if yes.
+
+────────────────────────────────────────────────────────────────────────────────
+Q15 [legacy_integration] — LEGACY GOVERNMENT SYSTEM INTEGRATION  [HARD FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the project require integration with existing legacy government systems
+or public administration platforms?
+
+Sub-questions:
+- Which specific legacy systems or platforms must be integrated with?
+  (e.g., SARA, Cl@ve, FACe, SIR, GEISER, @firma, SILICE, or sector-specific systems)
+- Is there API documentation, WSDL, or a technical specification available
+  for those systems?
+- Are these integrations central to the project scope, or peripheral add-ons?
+- Always set risk_flag: "HIGH" if any legacy government system integration is confirmed,
+  regardless of any other factor.
+
+────────────────────────────────────────────────────────────────────────────────
+Q16 [project_complexity] — PROJECT COMPLEXITY  [SOFT FLAG if specialised]
+────────────────────────────────────────────────────────────────────────────────
+What is the primary nature of the technical work described?
+
+Sub-questions:
+- Is it predominantly standard CRUD / web application development?
+- Does it require data modelling, analytics, or business intelligence?
+- Does it require machine learning, AI model development, NLP, or computer vision?
+- Does it involve both standard and specialised work (mixed)?
+- Would delivering this contract require hiring specialised profiles not currently
+  in a standard development team?
+  Set specialised_hires_needed: true if yes.
+- Describe the primary scope in 1–2 sentences in the description field.
+
+────────────────────────────────────────────────────────────────────────────────
+Q17 [fte_requirements] — TEAM DEDICATION / FTE REQUIREMENTS  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid require a specific number of Full-Time Equivalents (FTEs) or
+dedicated team members with defined dedication percentages?
+
+Sub-questions:
+- How many FTEs or dedicated profiles are required in total?
+- What seniority levels or roles are specified (project manager, tech lead,
+  senior developer, junior developer...)?
+- What percentage of dedication is required per profile?
+- Set team_capacity_flag: true if the total FTE commitment would exceed 40%
+  of a standard small development team (assumed: 6–8 people).
+
+────────────────────────────────────────────────────────────────────────────────
+Q18 [sla_requirements] — SERVICE LEVEL AGREEMENT  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid mandate a specific Service Level Agreement (SLA) or support
+availability requirements?
+
+Sub-questions:
+- Is 24/7 support explicitly required?
+- What are the response time targets for each incident severity level?
+- What are the resolution time targets for each incident severity level?
+- What financial penalties (penalizaciones) apply for SLA breaches?
+- Does the SLA require dedicated on-call or standby staffing?
+- Set exceeds_standard_flag: true if the SLA requires support outside
+  standard business hours (Mon–Fri 09:00–18:00 CET).
+
+────────────────────────────────────────────────────────────────────────────────
+Q19 [contract_structure] — CONTRACT DURATION AND STRUCTURE
+────────────────────────────────────────────────────────────────────────────────
+What is the contract duration and structure?
+Is it a one-off project, a multi-year framework agreement, or a combination?
+
+Sub-questions:
+- What is the initial contract duration in months?
+- Are there extension options (prórrogas)? For how many additional years
+  and under what conditions?
+- Is there a maximum total framework value over the full term (including extensions)?
+- Does the contract include recurring revenue streams such as maintenance,
+  support, or evolutionary development (mantenimiento evolutivo)?
+- Are there break clauses or early termination conditions?
+
+────────────────────────────────────────────────────────────────────────────────
+Q20 [intellectual_property] — INTELLECTUAL PROPERTY  [SOFT FLAG]
+────────────────────────────────────────────────────────────────────────────────
+Does the bid define intellectual property ownership of the deliverables?
+Who retains ownership of the source code and any derived assets?
+
+Sub-questions:
+- Does the client demand full transfer of ownership of all source code
+  and deliverables (cesión de derechos)?
+- Is there any provision for the vendor to retain or reuse generic components,
+  libraries, or frameworks developed during the project?
+- Are there restrictions on reusing the work in other client projects or
+  in a future SaaS product?
+- Set ip_flag: true if full IP transfer is mandated with no reuse rights retained.

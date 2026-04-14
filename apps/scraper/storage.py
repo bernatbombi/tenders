@@ -104,3 +104,15 @@ def upload_from_url(url: str, prefix: str = "") -> dict | None:
         result["publicUrl"] = f"{public_base}/{key}"
 
     return result
+
+
+def generate_presigned_url(key: str, expires_in: int = 3600) -> str:
+    """Generate a temporary presigned URL for an R2 object."""
+    bucket = os.environ.get("R2_BUCKET")
+    if not bucket:
+        raise RuntimeError("R2_BUCKET is not set.")
+    return _r2_client().generate_presigned_url(
+        "get_object",
+        Params={"Bucket": bucket, "Key": key},
+        ExpiresIn=expires_in,
+    )

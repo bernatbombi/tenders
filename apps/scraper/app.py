@@ -26,10 +26,11 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from db import (
     create_job, update_job, get_job,
     upsert_tenders, upsert_tender_detail, get_collection,
-    log_files_downloaded,
+    log_files_downloaded, log_analysis_completed,
 )
 from scraper import DEFAULT_CPV, fetch_tenders, fetch_tender_detail
-from storage import upload_from_url
+from storage import upload_from_url, generate_presigned_url
+from analyzer.analyzer import analyze
 
 load_dotenv()
 
@@ -84,6 +85,28 @@ def _job_detail(job_id: str, expediente: str):
         _upload_documents(job_id, expediente, detail)
         update_job(job_id, status="done", finishedAt=datetime.utcnow())
         print(f"[{job_id}] Done.")
+    except Exception as e:
+        update_job(job_id, status="failed", finishedAt=datetime.utcnow(), error=str(e))
+        print(f"[{job_id}] Failed: {e}")
+
+
+def _job_analyze(job_id: str, expediente: str):
+    update_job(job_id, status="running", startedAt=datetime.utcnow())
+    try:
+        print(f"[{job_id}] Analysing documents for {expediente}")
+        doc = get_collection().find_one({"expediente": expediente}, {"_id": 0})
+        if not doc:
+            raise ValueError(f"Expediente '{expediente}' not found in DB")
+
+        result = analyze(expediente, doc, generate_presigned_url)
+
+        get_collection().update_one(
+            {"expediente": expediente},
+            {"$set": {"analysis": result}},
+        )
+        log_analysis_completed(expediente)
+        update_job(job_id, status="done", finishedAt=datetime.utcnow())
+        print(f"[{job_id}] Analysis done for {expediente}")
     except Exception as e:
         update_job(job_id, status="failed", finishedAt=datetime.utcnow(), error=str(e))
         print(f"[{job_id}] Failed: {e}")
@@ -187,6 +210,14 @@ async def get_tender(expediente: str):
     if not doc:
         raise HTTPException(status_code=404, detail="Tender not found")
     return doc
+
+
+@app.post("/tenders/{expediente}/analyze", dependencies=[Depends(_verify_token)])
+async def analyze_tender(expediente: str, background_tasks: BackgroundTasks):
+    """Analyse tender documents with Claude. Runs in background."""
+    job_id = create_job("analyze", expediente=expediente, trigger="api")
+    background_tasks.add_task(_executor.submit, _job_analyze, job_id, expediente)
+    return {"jobId": job_id, "status": "pending", "expediente": expediente}
 
 
 @app.get("/jobs/{job_id}", dependencies=[Depends(_verify_token)])

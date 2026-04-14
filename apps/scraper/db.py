@@ -172,3 +172,7 @@ def log_detail_updated(expediente: str) -> None:
 
 def log_files_downloaded(expediente: str, count: int) -> None:
     _log(expediente, "files_downloaded", count=count)
+
+
+def log_analysis_completed(expediente: str) -> None:
+    _log(expediente, "analysis_completed")
