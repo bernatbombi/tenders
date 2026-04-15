@@ -18,7 +18,7 @@ from datetime import date, datetime
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeout
 
 SEARCH_URL = "https://contrataciondelestado.es/wps/portal/plataforma/buscadores/busqueda/"
-DEFAULT_CPV = "72200000"
+DEFAULT_CPV_CODES = ["72000000", "72224000", "72413000"]
 
 
 # ---------------------------------------------------------------------------
@@ -65,12 +65,12 @@ def _launch_browser(pw):
 # fetch_tenders
 # ---------------------------------------------------------------------------
 
-def fetch_tenders(cpv_code: str = DEFAULT_CPV, max_pages: int = 0) -> list[dict]:
+def fetch_tenders(cpv_codes: list[str] = DEFAULT_CPV_CODES, max_pages: int = 0) -> list[dict]:
     """
-    Search tenders by CPV code with submission deadline >= today.
+    Search tenders by CPV codes with submission deadline >= today.
 
     Args:
-        cpv_code: CPV code to filter by (default: 72200000 — IT consulting/supply).
+        cpv_codes: List of CPV codes to filter by.
         max_pages: Maximum pages to fetch. 0 = all pages.
 
     Returns:
@@ -100,17 +100,18 @@ def fetch_tenders(cpv_code: str = DEFAULT_CPV, max_pages: int = 0) -> list[dict]
         licitaciones.click()
         page.wait_for_load_state("networkidle", timeout=30000)
 
-        print(f"[3] Adding CPV code: {cpv_code}...")
+        print(f"[3] Adding CPV codes: {', '.join(cpv_codes)}...")
         cpv_input = page.locator("input[id*='codigoCpv']").first
         cpv_input.wait_for(timeout=10000)
-        cpv_input.fill(cpv_code)
+        add_btn = page.locator("a[id*='buttonAnyadirMultiple']").first
 
-        page.locator("a[id*='buttonAnyadirMultiple']").first.click()
-        page.wait_for_load_state("networkidle", timeout=15000)
-
-        options = page.locator("#comboCPVnoPrincipal option").all()
-        cpv_added = any(cpv_code in (opt.get_attribute("value") or "") for opt in options)
-        print(f"    CPV added: {cpv_added}")
+        for code in cpv_codes:
+            cpv_input.fill(code)
+            add_btn.click()
+            page.wait_for_load_state("networkidle", timeout=15000)
+            options = page.locator("#comboCPVnoPrincipal option").all()
+            added = any(code in (opt.get_attribute("value") or "") for opt in options)
+            print(f"    CPV {code} added: {added}")
 
         today_str = date.today().strftime("%d-%m-%Y")
         print(f"    Setting 'Presentación desde' = {today_str}")

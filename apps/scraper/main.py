@@ -12,14 +12,14 @@ Usage:
 import json
 import sys
 
-from scraper import DEFAULT_CPV, fetch_cpv_tree, fetch_tender_detail, fetch_tenders
+from scraper import fetch_cpv_tree, fetch_tender_detail, fetch_tenders, DEFAULT_CPV_CODES
 from db import upsert_tenders, upsert_tender_detail, get_collection, log_files_downloaded
 from storage import upload_from_url
 
 
-def cmd_fetch(cpv: str, max_pages: int) -> None:
-  print(f"=== Scraping tenders with CPV: {cpv} ===\n")
-  tenders = fetch_tenders(cpv, max_pages)
+def cmd_fetch(cpv_codes: list[str], max_pages: int) -> None:
+  print(f"=== Scraping tenders with CPV: {', '.join(cpv_codes)} ===\n")
+  tenders = fetch_tenders(cpv_codes, max_pages)
   print(f"\n=== Found {len(tenders)} tenders ===\n")
 
   for i, t in enumerate(tenders[:5], 1):
@@ -114,9 +114,9 @@ def main() -> None:
       sys.exit(1)
     cmd_detail(args[1])
   else:
-    cpv = args[0] if args else DEFAULT_CPV
+    cpv_codes = args[0].split(",") if args else DEFAULT_CPV_CODES
     max_pages = int(args[1]) if len(args) > 1 else 0
-    cmd_fetch(cpv, max_pages)
+    cmd_fetch(cpv_codes, max_pages)
 
 
 if __name__ == "__main__":

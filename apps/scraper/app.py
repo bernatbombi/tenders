@@ -28,7 +28,7 @@ from db import (
     upsert_tenders, upsert_tender_detail, get_collection,
     log_files_downloaded, log_analysis_completed,
 )
-from scraper import DEFAULT_CPV, fetch_tenders, fetch_tender_detail
+from scraper import DEFAULT_CPV_CODES, fetch_tenders, fetch_tender_detail
 from storage import upload_from_url, generate_presigned_url
 from analyzer.analyzer import analyze
 
@@ -55,11 +55,11 @@ def _verify_token(credentials: HTTPAuthorizationCredentials = Depends(_security)
 # Background jobs
 # ---------------------------------------------------------------------------
 
-def _job_refresh(job_id: str, cpv: str = DEFAULT_CPV, max_pages: int = 0):
+def _job_refresh(job_id: str, cpv_codes: list[str] = DEFAULT_CPV_CODES, max_pages: int = 0):
   update_job(job_id, status="running", startedAt=datetime.utcnow())
   try:
-    print(f"[{job_id}] Starting fetch CPV={cpv}")
-    tenders = fetch_tenders(cpv, max_pages)
+    print(f"[{job_id}] Starting fetch CPV={cpv_codes}")
+    tenders = fetch_tenders(cpv_codes, max_pages)
     print(f"[{job_id}] Fetched {len(tenders)} tenders, saving...")
     upsert_tenders(tenders)
     update_job(job_id, status="done", finishedAt=datetime.utcnow())
