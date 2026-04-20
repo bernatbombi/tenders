@@ -77,7 +77,7 @@ def analyze(expediente: str, tender_doc: dict, generate_presigned_url) -> dict:
         "text": (
             "Analyse the provided bid documents following the system instructions. "
             "The first document is the primary Pliegos. "
-            "Return only the JSON object — no markdown, no explanation."
+            "Return ONLY the raw JSON object. No prose, no markdown, no explanation before or after. Start your response with { and end with }."
         ),
     })
 
@@ -91,10 +91,11 @@ def analyze(expediente: str, tender_doc: dict, generate_presigned_url) -> dict:
 
     raw = message.content[0].text.strip()
 
-    # Strip markdown code block if present
-    if raw.startswith("```"):
-        raw = raw.split("\n", 1)[-1]
-        raw = raw.rsplit("```", 1)[0].strip()
+    # Extract JSON object — handles prose prefix, markdown code blocks, trailing text
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start != -1 and end != -1:
+        raw = raw[start:end + 1]
 
     try:
         return json.loads(raw)

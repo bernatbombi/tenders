@@ -3,8 +3,10 @@ services:
     name: tenders-api
     runtime: python
     rootDir: apps/scraper
-    buildCommand: pip install -r requirements.txt && playwright install --with-deps chromium
+    buildCommand: pip install -r requirements.txt && PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium
     startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: "0"

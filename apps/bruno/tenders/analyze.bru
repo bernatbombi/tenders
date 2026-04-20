@@ -5,13 +5,13 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/tenders/:slug/analyze
+  url: {{baseUrl}}/tenders/{{expediente}}/analyze
   body: none
   auth: bearer
 }
 
 params:path {
-  slug: {{slug}}
+  expediente: 1579267C
 }
 
 auth:bearer {
